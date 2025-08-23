@@ -3,7 +3,7 @@
     <div class="pageMiddle">
         <?php
         // If user is not logged in, show welcome box
-        if ($logedIn === 0) {
+        if ($logedIn == 0) {
             include 'posts/welcomebox.php';
         } else {
             if ($page !== 'profile') {
@@ -15,10 +15,8 @@
                     include 'storie/stories.php';
                 }
 
-                // Show post form if allowed
-                if ($normalUserCanPost === 'yes' || $feesStatus === '2') {
-                    include 'posts/postForm.php';
-                }
+                // Show post form
+                include 'posts/postForm.php';
             }
         }
 

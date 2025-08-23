@@ -18,7 +18,7 @@
     $page = 'moreposts';
 
     // Show login form if user is not logged in
-    if ($logedIn === '0') {
+    if ($logedIn == '0' || $logedIn === 0) {
         include 'login_form.php';
     }
 

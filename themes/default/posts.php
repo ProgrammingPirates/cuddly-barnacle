@@ -9,12 +9,8 @@
             if ($page != 'profile') {
                 echo html_entity_decode($verStatus);
 
-                // Check if user is allowed to post
-                if ($normalUserCanPost == 'yes') {
-                    include("posts/postForm.php");
-                } elseif ($feesStatus == '2') {
-                    include("posts/postForm.php");
-                }
+                // Show post form
+                include("posts/postForm.php");
             }
         }
 

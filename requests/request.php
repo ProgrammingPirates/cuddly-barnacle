@@ -79,11 +79,11 @@ if ($openAiStatus == '1') {
      * @return string                   AI-generated short response (max ~150 tokens)
      */
     function callOpenAI($userPrompt, $opanAiKey) {
-        $apiKey = $opanAiKey;
+        $apiKey = trim($opanAiKey);
         $url = 'https://api.openai.com/v1/chat/completions';
 
         $data = [
-            "model" => "gpt-4-turbo",
+            "model" => "gpt-4o-mini",
             "messages" => [
                 [
                     "role" => "system",

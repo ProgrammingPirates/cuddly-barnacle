@@ -70,13 +70,23 @@ mysqli_query($db, "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
 mysqli_query($db, "SET CHARACTER SET utf8mb4");
 
 // --------------------------------------------------------------------------
-// BASE URL DETECTION
+// BASE URL DETECTION (proxy-aware, PHP 5.x safe)
 // --------------------------------------------------------------------------
-$protocol   = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host       = $_SERVER['HTTP_HOST'];
+$protoHeader = isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : null;
+if ($protoHeader && strpos($protoHeader, ',') !== false) {
+    $protoHeader = substr($protoHeader, 0, strpos($protoHeader, ','));
+}
+$protocol = $protoHeader ? $protoHeader : ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http');
+
+$hostHeader = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : null;
+if ($hostHeader && strpos($hostHeader, ',') !== false) {
+    $hostHeader = substr($hostHeader, 0, strpos($hostHeader, ','));
+}
+$host = $hostHeader ? $hostHeader : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'localhost'));
+
 $scriptName = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-$rootPath   = rtrim(preg_replace('/(\/requests|\/includes|\/themes|\/langs|\/src|\/ajax|\/admin|\/panel).*/i', '', $scriptName), '/');
-$base_url   = $protocol . '://' . $host . $rootPath . '/';
+$rootPath = rtrim(preg_replace('/(\/requests|\/includes|\/themes|\/langs|\/src|\/ajax|\/admin|\/panel).*/i', '', $scriptName), '/');
+$base_url = $protocol . '://' . $host . $rootPath . '/';
 
 // --------------------------------------------------------------------------
 // FILE SYSTEM PATHS
