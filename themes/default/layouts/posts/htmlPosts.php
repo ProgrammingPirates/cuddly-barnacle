@@ -10,7 +10,7 @@ if ($logedIn === 0) {
     $loginFormClass = 'loginForm';
 
     if ($page === 'moreposts') {
-        $postsFromData = $iN->iN_AllFriendsPostsOut($lastPostID, $showingNumberOfPost);
+        $postsFromData = $iN->iN_AllPublicPostsOut($lastPostID, $showingNumberOfPost);
     } elseif ($page === 'profile') {
         $postsFromData = $iN->iN_AllUserProfilePosts($p_profileID, $lastPostID, $showingNumberOfPost);
     } elseif ($page === 'hashtag') {
