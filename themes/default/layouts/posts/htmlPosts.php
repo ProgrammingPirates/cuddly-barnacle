@@ -6,11 +6,14 @@ $loginFormClass = '';
 $postsFromData = $postsFromDataProduct = $profileFollowers = $profileFollowing = $profileSubscriber = $userTextForPostTip = '';
 
 // If user is not logged in
-if ($logedIn === 0) {
+if ($logedIn == 0) {
     $loginFormClass = 'loginForm';
 
     if ($page === 'moreposts') {
-        $postsFromData = $iN->iN_AllPublicPostsOut($lastPostID, $showingNumberOfPost);
+        $postsFromData = $iN->iN_AllUserForExplore(0, $lastPostID, $showingNumberOfPost);
+        if (is_array($postsFromData)) {
+            $postsFromData = array_values(array_filter($postsFromData, function($p){ return isset($p['who_can_see']) && (string)$p['who_can_see'] === '1'; }));
+        }
     } elseif ($page === 'profile') {
         $postsFromData = $iN->iN_AllUserProfilePosts($p_profileID, $lastPostID, $showingNumberOfPost);
     } elseif ($page === 'hashtag') {
