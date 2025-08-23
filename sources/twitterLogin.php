@@ -7,7 +7,7 @@ define("SECRET_KEY", $Keys['s_key_two']);
 /* make sure the url end with a trailing slash, give your site URL */
 define("SITE_URL", $base_url);
 /* the page where you will be redirected for authorization */
-define("REDIRECT_URL", SITE_URL."twitterLogin.php");
+define("REDIRECT_URL", SITE_URL."twitterLogin");
 
 define("LOGOUT_URL", SITE_URL."logout.php");
  
