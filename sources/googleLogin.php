@@ -5,7 +5,7 @@ $Keys = $iN->iN_SocialLoginDetails('google');
 /* make sure the url end with a trailing slash */
 define("SITE_URL", $base_url);
 /* the page where you will be redirected for authorzation */
-define("REDIRECT_URL", SITE_URL."googleLogin");
+define("REDIRECT_URL", SITE_URL."googleLogin.php");
 
 /* * ***** Google related activities start ** */
 define("CLIENT_ID", $Keys['s_key_one']);

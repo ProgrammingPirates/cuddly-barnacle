@@ -70,10 +70,12 @@ mysqli_query($db, "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
 mysqli_query($db, "SET CHARACTER SET utf8mb4");
 
 // --------------------------------------------------------------------------
-// BASE URL DETECTION
+// BASE URL DETECTION (proxy-aware)
 // --------------------------------------------------------------------------
-$protocol   = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host       = $_SERVER['HTTP_HOST'];
+$protoHeader = isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'])[0] : null;
+$protocol   = $protoHeader ? $protoHeader : ((! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http');
+$hostHeader = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : null;
+$host       = $hostHeader ? $hostHeader : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']);
 $scriptName = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
 $rootPath   = rtrim(preg_replace('/(\/requests|\/includes|\/themes|\/langs|\/src|\/ajax|\/admin|\/panel).*/i', '', $scriptName), '/');
 $base_url   = $protocol . '://' . $host . $rootPath . '/';
