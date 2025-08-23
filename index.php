@@ -177,6 +177,7 @@ if (preg_match('~/(admin)/([[\w.-]+)~', urldecode($requestUri), $match)) {
             'payment-failed'    => 'payment-failed.php',
             'payment-failed.php'=> 'payment-failed.php',
             'payment-response'  => 'payment-response.php',
+            'payment-response.php' => 'payment-response.php',
             'creators'          => 'creators.php',
             'creators.php'      => 'creators.php',
             'marketplace'       => 'marketplace.php',
