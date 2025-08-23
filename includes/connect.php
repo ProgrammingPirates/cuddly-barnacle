@@ -13,9 +13,18 @@ define('APP_DEBUG', false);
 // DATABASE CONFIGURATION
 // --------------------------------------------------------------------------
 define('DB_SERVER', 'localhost');
-define('DB_USERNAME', 'YOUR_DB_USERNAME');
-define('DB_PASSWORD', 'YOUR_DB_PASSWORD');
-define('DB_DATABASE', 'YOUR_DB_NAME');
+define('DB_USERNAME', 'root'); // Default MySQL username
+define('DB_PASSWORD', ''); // Default empty password for local development
+define('DB_DATABASE', 'dizzy_db'); // More appropriate database name
+
+// --------------------------------------------------------------------------
+// IMPORTANT: CHANGE THESE CREDENTIALS BEFORE DEPLOYMENT!
+// --------------------------------------------------------------------------
+// For production, use strong credentials:
+// - Create a dedicated database user with limited privileges
+// - Use a strong password
+// - Consider using environment variables for sensitive data
+// --------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
 // DATABASE CONNECTION WITH ERROR HANDLING
