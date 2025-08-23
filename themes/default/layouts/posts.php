@@ -3,7 +3,7 @@
     <div class="pageMiddle">
         <?php
         // If user is not logged in, show welcome box
-        if ($logedIn === 0) {
+        if ($logedIn == 0) {
             include 'posts/welcomebox.php';
         } else {
             if ($page !== 'profile') {

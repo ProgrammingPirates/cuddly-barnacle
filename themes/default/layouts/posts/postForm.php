@@ -25,8 +25,8 @@
 
     <div class="i_post_form transition aft">
         <div class="i_post_creator_avatar">
-            <a href="<?php echo iN_HelpSecure($base_url) . $userName; ?>">
-                <img src="<?php echo iN_HelpSecure($userAvatar); ?>" alt="<?php echo iN_HelpSecure($userFullName); ?>">
+            <a href="<?php echo iN_HelpSecure($base_url) . (isset($userName) ? $userName : ''); ?>">
+                <img src="<?php echo iN_HelpSecure(isset($userAvatar) ? $userAvatar : ($base_url.'uploads/avatars/no_gender.png')); ?>" alt="<?php echo iN_HelpSecure(isset($userFullName) ? $userFullName : ''); ?>">
             </a>
         </div>
         <div class="i_post_form_textarea">
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <?php if ($userWhoCanSeePost === '4') : ?>
+    <?php if (isset($userWhoCanSeePost) && ($userWhoCanSeePost === '4' || $userWhoCanSeePost === 4)) : ?>
         <div class="point_input_wrapper">
             <input
                 type="text"
@@ -119,7 +119,7 @@
         <div class="form_who_see transition">
             <div class="whoSeeBox whs">
                 <div class="wBox">
-                    <?php echo html_entity_decode($activeWhoCanSee); ?>
+                    <?php echo isset($activeWhoCanSee) ? html_entity_decode($activeWhoCanSee) : ''; ?>
                 </div>
                 <?php echo html_entity_decode($iN->iN_SelectedMenuIcon('36')); ?>
             </div>
@@ -127,20 +127,20 @@
             <div class="i_choose_ws_wrapper">
                 <div class="whctt"><?php echo iN_HelpSecure($LANG['whocanseethis']); ?></div>
 
-                <div class="i_whoseech_menu_item_out wsUpdate transition <?php echo $userWhoCanSeePost === 1 ? 'wselected' : ''; ?>" data-id="1" id="wsUpdate1">
+                <div class="i_whoseech_menu_item_out wsUpdate transition <?php echo (isset($userWhoCanSeePost) && ($userWhoCanSeePost === 1 || $userWhoCanSeePost === '1')) ? 'wselected' : ''; ?>" data-id="1" id="wsUpdate1">
                     <?php echo html_entity_decode($iN->iN_SelectedMenuIcon('50')); ?> <?php echo iN_HelpSecure($LANG['weveryone']); ?>
                 </div>
 
-                <div class="i_whoseech_menu_item_out wsUpdate transition <?php echo $userWhoCanSeePost === 2 ? 'wselected' : ''; ?>" data-id="2" id="wsUpdate2">
+                <div class="i_whoseech_menu_item_out wsUpdate transition <?php echo (isset($userWhoCanSeePost) && ($userWhoCanSeePost === 2 || $userWhoCanSeePost === '2')) ? 'wselected' : ''; ?>" data-id="2" id="wsUpdate2">
                     <?php echo html_entity_decode($iN->iN_SelectedMenuIcon('15')); ?> <?php echo iN_HelpSecure($LANG['wfollowers']); ?>
                 </div>
 
                 <?php if ($feesStatus === '2') : ?>
-                    <div class="i_whoseech_menu_item_out wsUpdate transition <?php echo $userWhoCanSeePost === 3 ? 'wselected' : ''; ?>" data-id="3" id="wsUpdate3">
+                    <div class="i_whoseech_menu_item_out wsUpdate transition <?php echo (isset($userWhoCanSeePost) && ($userWhoCanSeePost === 3 || $userWhoCanSeePost === '3')) ? 'wselected' : ''; ?>" data-id="3" id="wsUpdate3">
                         <?php echo html_entity_decode($iN->iN_SelectedMenuIcon('51')); ?> <?php echo iN_HelpSecure($LANG['wsubscribers']); ?>
                     </div>
 
-                    <div class="i_whoseech_menu_item_out wsUpdate transition <?php echo $userWhoCanSeePost === 4 ? 'wselected' : ''; ?>" data-id="4" id="wsUpdate4">
+                    <div class="i_whoseech_menu_item_out wsUpdate transition <?php echo (isset($userWhoCanSeePost) && ($userWhoCanSeePost === 4 || $userWhoCanSeePost === '4')) ? 'wselected' : ''; ?>" data-id="4" id="wsUpdate4">
                         <?php echo html_entity_decode($iN->iN_SelectedMenuIcon('9')); ?> <?php echo iN_HelpSecure($LANG['premium']); ?>
                     </div>
                 <?php endif; ?>
