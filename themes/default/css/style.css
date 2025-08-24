@@ -3266,6 +3266,74 @@ div {
   filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4));
 }
 
+/* Instagram-like inline video styles */
+.video-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.inline-video {
+  position: absolute;
+  display: block;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  background: #000;
+}
+
+.video-thumbnail {
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.video-container:hover .video-thumbnail {
+  opacity: 0.9;
+}
+
+.video-container .playbutton {
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.video-container:hover .playbutton {
+  transform: scale(1.1);
+}
+
+.video-container .playbutton.inline-video-play {
+  pointer-events: all;
+}
+
+/* Video controls styling */
+.inline-video::-webkit-media-controls {
+  display: none !important;
+}
+
+.inline-video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+/* Custom video controls on hover */
+.video-container:hover .inline-video {
+  cursor: pointer;
+}
+
+/* Responsive video sizing */
+@media (max-width: 768px) {
+  .video-container .playbutton {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .video-container .playbutton svg {
+    width: 45px;
+    height: 45px;
+  }
+}
+
 .onlySubs {
   position: absolute;
   width: 100%;

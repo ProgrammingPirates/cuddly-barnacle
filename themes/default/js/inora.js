@@ -4396,4 +4396,101 @@ $(document).ready(function () {
             $(".i_subs_modal").remove();
         }, 200);
     });
+
+    // Instagram-like inline video playback functionality
+    $(document).on("click", ".inline-video-play", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const videoId = $(this).data('video-id');
+        const videoUrl = $(this).data('video-url');
+        const container = $(this).closest('.video-container');
+        const video = container.find('#video_' + videoId);
+        const thumbnail = container.find('#thumbnail_' + videoId);
+        const playButton = $(this);
+        
+        // Pause all other videos first
+        $('.inline-video').each(function() {
+            if (this.id !== 'video_' + videoId) {
+                this.pause();
+                $(this).hide();
+                $(this).closest('.video-container').find('.video-thumbnail').show();
+                $(this).closest('.video-container').find('.inline-video-play').show();
+            }
+        });
+        
+        if (video.length > 0) {
+            // Hide thumbnail and play button
+            thumbnail.hide();
+            playButton.hide();
+            
+            // Show and play video
+            video.show();
+            video[0].play().catch(function(error) {
+                console.log("Auto-play prevented:", error);
+            });
+            
+            // Add click handler to video for pause/play toggle
+            video.off('click.inlineVideo').on('click.inlineVideo', function(e) {
+                e.stopPropagation();
+                if (this.paused) {
+                    this.play();
+                } else {
+                    this.pause();
+                }
+            });
+            
+            // Handle video ended
+            video.off('ended.inlineVideo').on('ended.inlineVideo', function() {
+                $(this).hide();
+                thumbnail.show();
+                playButton.show();
+                this.currentTime = 0;
+            });
+        }
+    });
+
+    // Handle clicking on video thumbnail (same as play button)
+    $(document).on("click", ".video-thumbnail", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const container = $(this).closest('.video-container');
+        const playButton = container.find('.inline-video-play');
+        if (playButton.length > 0) {
+            playButton.trigger('click');
+        }
+    });
+
+    // Prevent lightGallery from initializing on video containers
+    function reInitPostPlugins(scope) {
+        if (!scope) return;
+
+        scope.find('[id^="lightgallery"]').each(function () {
+          const $this = $(this);
+          if (!$this.hasClass('lg-initialized') && !$this.hasClass('video-container')) {
+            $this.lightGallery({
+              videojs: true,
+              mode: 'lg-fade',
+              cssEasing: 'cubic-bezier(0.25, 0, 0.25, 1)',
+              download: false,
+              share: false
+            });
+        }
+    });
+
+        scope.find('[id^="play_po_"]').each(function () {
+          const $this = $(this);
+          if (!$this.hasClass('green-audio-player-loaded')) {
+            new GreenAudioPlayer($this[0], {
+              stopOthersOnPlay: true,
+              showTooltips: true,
+              showDownloadButton: false,
+              enableKeystrokes: true
+            });
+            $this.addClass('green-audio-player-loaded');
+          }
+        });
+    }
+
 })(jQuery);

@@ -70,9 +70,25 @@
                 }else{
                     $filePathUrl = $base_url . $filePath;
                 }
+                // Get the actual video file URL for inline playback
+                $actualVideoUrl = '';
                 $videoPlaybutton ='';
                 if($fileExtension == 'mp4'){
-                    $videoPlaybutton = '<div class="playbutton">'.$iN->iN_SelectedMenuIcon('55').'</div>';
+                    // Get the actual video file path (not thumbnail)
+                    $actualVideoPath = $fileData['uploaded_file_path'] ?? NULL;
+                    
+                    // Build actual video URL based on storage type
+                    if ($s3Status == 1) {
+                        $actualVideoUrl = 'https://' . $s3Bucket . '.s3.' . $s3Region . '.amazonaws.com/' . $actualVideoPath;
+                    } else if($WasStatus == 1) {
+                        $actualVideoUrl = 'https://' . $WasBucket . '.s3.' . $WasRegion . '.wasabisys.com/' . $actualVideoPath;
+                    } else if ($digitalOceanStatus == '1') {
+                        $actualVideoUrl = 'https://' . $oceanspace_name . '.' . $oceanregion . '.digitaloceanspaces.com/' . $actualVideoPath;
+                    } else {
+                        $actualVideoUrl = $base_url . $actualVideoPath;
+                    }
+                    
+                    $videoPlaybutton = '<div class="playbutton inline-video-play" data-video-url="' . $actualVideoUrl . '" data-video-id="' . $fileUploadID . '">'.$iN->iN_SelectedMenuIcon('55').'</div>';
                     $PathExtension = '.jpg';
                     if ($s3Status == 1) {
                         $filePathUrl = 'https://' . $s3Bucket . '.s3.' . $s3Region . '.amazonaws.com/' . $filePathWithoutExt . $PathExtension;
@@ -92,9 +108,17 @@
                     $fileisVideo = 'data-src="'.$filePathUrl.'"';
                 }
         ?>
-        <div class="i_post_image_swip_wrapper" style="background-image:url('<?php echo iN_HelpSecure($filePathUrl);?>');" <?php echo html_entity_decode($fileisVideo);?>>
+        <div class="i_post_image_swip_wrapper <?php echo ($fileExtension == 'mp4') ? 'video-container' : ''; ?>" style="background-image:url('<?php echo iN_HelpSecure($filePathUrl);?>');" <?php echo html_entity_decode($fileisVideo);?>>
+            <?php if($fileExtension == 'mp4'){ ?>
+                <video class="inline-video" id="video_<?php echo $fileUploadID; ?>" poster="<?php echo iN_HelpSecure($filePathUrl); ?>" preload="metadata" style="display: none;">
+                    <source src="<?php echo iN_HelpSecure($actualVideoUrl); ?>" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+                <img class="i_p_image video-thumbnail" src="<?php echo iN_HelpSecure($filePathUrl);?>" id="thumbnail_<?php echo $fileUploadID; ?>">
+            <?php } else { ?>
+                <img class="i_p_image" src="<?php echo iN_HelpSecure($filePathUrl);?>">
+            <?php } ?>
             <?php echo html_entity_decode($videoPlaybutton);?>
-            <img class="i_p_image" src="<?php echo iN_HelpSecure($filePathUrl);?>">
         </div>
         <?php }} echo '</div>'; } ?>
         <div class="gallery_trigger" data-gallery-id="lightgallery<?php echo iN_HelpSecure($cMessageID); ?>"></div>
