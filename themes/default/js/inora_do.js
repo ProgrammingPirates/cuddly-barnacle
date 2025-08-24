@@ -90,13 +90,15 @@
     // Inline video playback like Instagram: play within feed instead of opening lightbox
     function handleInlineVideoClick(e) {
         e.preventDefault();
-        e.stopPropagation();
+        if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); } else { e.stopPropagation(); }
         var $wrap = $(this).closest('.i_post_image_swip_wrapper');
         var htmlSelector = $wrap.attr('data-html');
+        try { console.debug('[inline-video] wrapper click', htmlSelector); } catch (e) {}
         if (!htmlSelector) { return; }
         var $videoSource = $(htmlSelector).find('video').first();
         if (!$videoSource.length) { return; }
-        var src = $videoSource.find('source').attr('src') || $videoSource.attr('src');
+        var src = $(htmlSelector).find('source[type="video/mp4"]').attr('src') || $videoSource.find('source').attr('src') || $videoSource.attr('src');
+        try { console.debug('[inline-video] src', src); } catch (e) {}
         if (!src) { return; }
 
         if (!$wrap.data('inlineVideoInitialized')) {
@@ -142,12 +144,14 @@
     // Inline video playback for product/swiper slides
     function handleInlineVideoClickSwiper(e) {
         e.preventDefault();
-        e.stopPropagation();
+        if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); } else { e.stopPropagation(); }
         var $anchor = $(this);
         var htmlSelector = $anchor.attr('data-html');
+        try { console.debug('[inline-video-swiper] anchor click', htmlSelector); } catch (e) {}
         var $videoSource = $(htmlSelector).find('video').first();
         if (!$videoSource.length) { return; }
-        var src = $videoSource.find('source').attr('src') || $videoSource.attr('src');
+        var src = $(htmlSelector).find('source[type="video/mp4"]').attr('src') || $videoSource.find('source').attr('src') || $videoSource.attr('src');
+        try { console.debug('[inline-video-swiper] src', src); } catch (e) {}
         if (!src) { return; }
 
         var $container = $anchor.closest('.swiper-slide');
