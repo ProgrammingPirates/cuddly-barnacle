@@ -43,6 +43,7 @@
             const $gallery = $("#" + galleryID);
             if ($gallery.length > 0) {
               $gallery.lightGallery({
+                selector: '[data-src]',
                 videojs: true,
                 mode: 'lg-fade',
                 cssEasing: 'cubic-bezier(0.25, 0, 0.25, 1)',
@@ -62,6 +63,7 @@
           const $this = $(this);
           if (!$this.hasClass('lg-initialized')) {
             $this.lightGallery({
+              selector: '[data-src]',
               videojs: true,
               mode: 'lg-fade',
               cssEasing: 'cubic-bezier(0.25, 0, 0.25, 1)',
@@ -84,6 +86,46 @@
           }
         });
     }
+
+    // Inline video playback like Instagram: play within feed instead of opening lightbox
+    $(document)
+      .off('click.inlineVideo', '.i_post_image_swip_wrapper[data-html]')
+      .on('click.inlineVideo', '.i_post_image_swip_wrapper[data-html]', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $wrap = $(this);
+        var htmlSelector = $wrap.attr('data-html');
+        if (!htmlSelector) { return; }
+        var $videoSource = $(htmlSelector).find('video').first();
+        if (!$videoSource.length) { return; }
+
+        if (!$wrap.data('inlineVideoInitialized')) {
+          var $video = $videoSource.clone();
+          $video.removeAttr('onended');
+          $video.attr('playsinline', '');
+          $video.attr('controls', '');
+          $video.attr('preload', 'metadata');
+          $video.attr('muted', 'muted');
+
+          $wrap.empty().append($video);
+          $wrap.removeAttr('data-html').removeAttr('data-poster');
+          $wrap.data('inlineVideoInitialized', true);
+
+          var videoEl = $video.get(0);
+          if (videoEl && videoEl.play) {
+            try { videoEl.play(); } catch (err) {}
+          }
+        } else {
+          var videoEl2 = $wrap.find('video').get(0);
+          if (videoEl2) {
+            if (videoEl2.paused) {
+              try { videoEl2.play(); } catch (err) {}
+            } else {
+              videoEl2.pause();
+            }
+          }
+        }
+      });
 
     window.initImageBackgrounds = function (targetSelector = '.i_post_image_swip_wrapper', scope = $(document)) {
       scope.find(targetSelector).each(function () {
