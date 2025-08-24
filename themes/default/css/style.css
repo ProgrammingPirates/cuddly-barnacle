@@ -3266,6 +3266,85 @@ div {
   filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4));
 }
 
+/* Instagram-like embedded video styles */
+.video-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.embedded-video {
+  position: absolute;
+  display: block;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  background: #000;
+  border: none;
+  outline: none;
+}
+
+.video-thumbnail {
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.video-container:hover .video-thumbnail {
+  opacity: 0.9;
+}
+
+.video-container .playbutton {
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.video-container:hover .playbutton {
+  transform: scale(1.1);
+}
+
+.video-container .playbutton.inline-video-play {
+  pointer-events: all;
+}
+
+/* Embedded video controls styling - keep native controls but style them */
+.embedded-video::-webkit-media-controls-panel {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.embedded-video::-webkit-media-controls-play-button {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+}
+
+/* Hide controls initially, show on hover */
+.embedded-video {
+  cursor: pointer;
+}
+
+.embedded-video:hover {
+  cursor: pointer;
+}
+
+/* Responsive video sizing */
+@media (max-width: 768px) {
+  .video-container .playbutton {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .video-container .playbutton svg {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .embedded-video {
+    object-fit: cover;
+  }
+}
+
 .onlySubs {
   position: absolute;
   width: 100%;

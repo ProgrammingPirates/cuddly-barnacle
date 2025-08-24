@@ -323,9 +323,25 @@ echo html_entity_decode($pPinStatus ?? ''); ?>
         			}
         		}
 
+        		// Get the actual video file URL for inline playback
+        		$actualVideoUrl = '';
         		$videoPlaybutton = '';
         		if ($fileExtension == 'mp4') {
-        			$videoPlaybutton = '<div class="playbutton">' . $iN->iN_SelectedMenuIcon('55') . '</div>';
+        			// Get the actual video file path (not thumbnail)
+        			$actualVideoPath = $fileData['uploaded_file_path'] ?? NULL;
+        			
+        			// Build actual video URL based on storage type
+        			if ($s3Status == 1) {
+        				$actualVideoUrl = 'https://' . $s3Bucket . '.s3.' . $s3Region . '.amazonaws.com/' . $actualVideoPath;
+        			} else if($WasStatus == 1) {
+        				$actualVideoUrl = 'https://' . $WasBucket . '.s3.' . $WasRegion . '.wasabisys.com/' . $actualVideoPath;
+        			} else if ($digitalOceanStatus == '1') {
+        				$actualVideoUrl = 'https://' . $oceanspace_name . '.' . $oceanregion . '.digitaloceanspaces.com/' . $actualVideoPath;
+        			} else {
+        				$actualVideoUrl = $base_url . $actualVideoPath;
+        			}
+        			
+        			$videoPlaybutton = '<div class="playbutton inline-video-play" data-video-url="' . $actualVideoUrl . '" data-video-id="' . $fileUploadID . '">' . $iN->iN_SelectedMenuIcon('55') . '</div>';
         			$PathExtension = '.jpg';
         			if ($s3Status == 1) {
         				if ($userPostWhoCanSee == '2' && $getFriendStatusBetweenTwoUser != 'me' && $getFriendStatusBetweenTwoUser != 'flwr') {
@@ -403,7 +419,7 @@ echo html_entity_decode($pPinStatus ?? ''); ?>
         					$filePathTumbnailUrl = $base_url . $fileData['upload_tumbnail_file_path'];
         				}
         			}
-        			$fileisVideo = 'data-poster="' . $filePathUrl . '" data-html="#video' . $fileUploadID . '"';
+        			$fileisVideo = 'data-video-url="' . $actualVideoUrl . '" data-video-id="' . $fileUploadID . '"';
         		} else {
         			/*aaa*/
         			if ($s3Status == 1) {
@@ -461,9 +477,13 @@ echo html_entity_decode($pPinStatus ?? ''); ?>
         		}
         		?>
         		<?php if($fileExtension != 'mp3'){?>
-                    <div class="i_post_image_swip_wrapper" data-bg="<?php echo iN_HelpSecure($filePathUrl); ?>" <?php echo html_entity_decode($fileisVideo); ?>>
+                    <div class="i_post_image_swip_wrapper <?php echo ($fileExtension == 'mp4') ? 'video-container' : ''; ?>" data-bg="<?php echo iN_HelpSecure($filePathUrl); ?>" <?php echo html_entity_decode($fileisVideo); ?>>
+                        <?php if($fileExtension == 'mp4'){ ?>
+                            <img class="i_p_image video-thumbnail" src="<?php echo iN_HelpSecure($filePathUrl); ?>" data-video-src="<?php echo iN_HelpSecure($actualVideoUrl); ?>" data-video-id="<?php echo $fileUploadID; ?>">
+                        <?php } else { ?>
+                            <img class="i_p_image" src="<?php echo iN_HelpSecure($filePathUrl); ?>">
+                        <?php } ?>
                         <?php echo html_entity_decode($videoPlaybutton); ?>
-                        <img class="i_p_image" src="<?php echo iN_HelpSecure($filePathUrl); ?>">
                     </div>
         		<?php }?>
                     <?php }
