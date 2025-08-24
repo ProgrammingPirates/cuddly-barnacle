@@ -4397,7 +4397,7 @@ $(document).ready(function () {
         }, 200);
     });
 
-    // Instagram-like inline video playback functionality
+    // Instagram-like embedded video playback functionality
     $(document).on("click", ".inline-video-play", function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -4405,49 +4405,65 @@ $(document).ready(function () {
         const videoId = $(this).data('video-id');
         const videoUrl = $(this).data('video-url');
         const container = $(this).closest('.video-container');
-        const video = container.find('#video_' + videoId);
-        const thumbnail = container.find('#thumbnail_' + videoId);
+        const thumbnail = container.find('.video-thumbnail');
         const playButton = $(this);
         
-        // Pause all other videos first
-        $('.inline-video').each(function() {
-            if (this.id !== 'video_' + videoId) {
-                this.pause();
-                $(this).hide();
-                $(this).closest('.video-container').find('.video-thumbnail').show();
-                $(this).closest('.video-container').find('.inline-video-play').show();
+        // Pause and reset all other videos first
+        $('.video-container').each(function() {
+            const otherContainer = $(this);
+            const otherVideo = otherContainer.find('video');
+            if (otherVideo.length > 0 && otherContainer[0] !== container[0]) {
+                otherVideo[0].pause();
+                otherVideo[0].currentTime = 0;
+                // Replace video back with thumbnail
+                const otherThumbnail = otherContainer.find('.video-thumbnail');
+                const otherPlayBtn = otherContainer.find('.inline-video-play');
+                otherVideo.replaceWith('<img class="i_p_image video-thumbnail" src="' + otherThumbnail.data('original-src') + '" data-video-src="' + otherThumbnail.data('video-src') + '" data-video-id="' + otherThumbnail.data('video-id') + '">');
+                otherPlayBtn.show();
             }
         });
         
-        if (video.length > 0) {
-            // Hide thumbnail and play button
-            thumbnail.hide();
-            playButton.hide();
-            
-            // Show and play video
-            video.show();
-            video[0].play().catch(function(error) {
-                console.log("Auto-play prevented:", error);
-            });
-            
-            // Add click handler to video for pause/play toggle
-            video.off('click.inlineVideo').on('click.inlineVideo', function(e) {
-                e.stopPropagation();
-                if (this.paused) {
-                    this.play();
-                } else {
-                    this.pause();
-                }
-            });
-            
-            // Handle video ended
-            video.off('ended.inlineVideo').on('ended.inlineVideo', function() {
-                $(this).hide();
-                thumbnail.show();
-                playButton.show();
-                this.currentTime = 0;
-            });
+        // Store original thumbnail src for later restoration
+        if (!thumbnail.data('original-src')) {
+            thumbnail.data('original-src', thumbnail.attr('src'));
         }
+        
+        // Create video element to replace the thumbnail
+        const videoElement = $('<video class="i_p_image embedded-video" autoplay controls muted playsinline>' +
+            '<source src="' + videoUrl + '" type="video/mp4">' +
+            'Your browser does not support HTML5 video.' +
+            '</video>');
+        
+        // Hide play button
+        playButton.hide();
+        
+        // Replace thumbnail with video
+        thumbnail.replaceWith(videoElement);
+        
+        // Handle video events
+        videoElement[0].addEventListener('ended', function() {
+            // Replace video back with thumbnail when ended
+            const originalSrc = $(this).closest('.video-container').find('.video-thumbnail').data('original-src') || 
+                              $(this).closest('.video-container').data('bg');
+            const newThumbnail = $('<img class="i_p_image video-thumbnail" src="' + originalSrc + '" data-video-src="' + videoUrl + '" data-video-id="' + videoId + '">');
+            newThumbnail.data('original-src', originalSrc);
+            $(this).replaceWith(newThumbnail);
+            playButton.show();
+        });
+        
+        videoElement[0].addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (this.paused) {
+                this.play();
+            } else {
+                this.pause();
+            }
+        });
+        
+        // Start playing
+        videoElement[0].play().catch(function(error) {
+            console.log("Auto-play prevented:", error);
+        });
     });
 
     // Handle clicking on video thumbnail (same as play button)

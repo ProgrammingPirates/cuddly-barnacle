@@ -382,11 +382,7 @@ if($userSharedPostWhoCanSee == '1'){
             ?>
                 <div class="i_post_image_swip_wrapper <?php echo ($fileExtension == 'mp4') ? 'video-container' : ''; ?>" data-bg="<?php echo iN_HelpSecure($filePathUrl); ?>" <?php echo $fileisVideo;?>>
                     <?php if($fileExtension == 'mp4'){ ?>
-                        <video class="inline-video" id="video_<?php echo $fileUploadID; ?>" poster="<?php echo iN_HelpSecure($filePathUrl); ?>" preload="metadata" style="display: none;">
-                            <source src="<?php echo iN_HelpSecure($actualVideoUrl); ?>" type="video/mp4">
-                            Your browser does not support HTML5 video.
-                        </video>
-                        <img class="i_p_image video-thumbnail" src="<?php echo $filePathUrl;?>" id="thumbnail_<?php echo $fileUploadID; ?>">
+                        <img class="i_p_image video-thumbnail" src="<?php echo $filePathUrl;?>" data-video-src="<?php echo iN_HelpSecure($actualVideoUrl); ?>" data-video-id="<?php echo $fileUploadID; ?>">
                     <?php } else { ?>
                         <img class="i_p_image" src="<?php echo $filePathUrl;?>">
                     <?php } ?>

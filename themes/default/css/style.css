@@ -3266,13 +3266,13 @@ div {
   filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4));
 }
 
-/* Instagram-like inline video styles */
+/* Instagram-like embedded video styles */
 .video-container {
   position: relative;
   cursor: pointer;
 }
 
-.inline-video {
+.embedded-video {
   position: absolute;
   display: block;
   left: 0;
@@ -3284,6 +3284,8 @@ div {
   object-fit: cover;
   z-index: 2;
   background: #000;
+  border: none;
+  outline: none;
 }
 
 .video-thumbnail {
@@ -3307,17 +3309,22 @@ div {
   pointer-events: all;
 }
 
-/* Video controls styling */
-.inline-video::-webkit-media-controls {
-  display: none !important;
+/* Embedded video controls styling - keep native controls but style them */
+.embedded-video::-webkit-media-controls-panel {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-.inline-video::-webkit-media-controls-enclosure {
-  display: none !important;
+.embedded-video::-webkit-media-controls-play-button {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
 }
 
-/* Custom video controls on hover */
-.video-container:hover .inline-video {
+/* Hide controls initially, show on hover */
+.embedded-video {
+  cursor: pointer;
+}
+
+.embedded-video:hover {
   cursor: pointer;
 }
 
@@ -3331,6 +3338,10 @@ div {
   .video-container .playbutton svg {
     width: 45px;
     height: 45px;
+  }
+  
+  .embedded-video {
+    object-fit: cover;
   }
 }
 
