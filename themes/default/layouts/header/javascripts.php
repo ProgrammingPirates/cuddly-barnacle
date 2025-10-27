@@ -15,7 +15,7 @@ $baseThemePath = iN_HelpSecure($base_url) . 'themes/' . iN_HelpSecure($currentTh
   <script src="<?php echo $baseThemePath; ?>/js/videojs/video.js" defer></script>
   <script src="<?php echo $baseThemePath; ?>/js/scrollBar/jquery.slimscroll.min.js" defer></script>
   <script src="<?php echo $baseThemePath; ?>/js/character_count.js?v=<?php echo iN_HelpSecure($version); ?>" defer></script> 
-  <script src="<?php echo $baseThemePath; ?>/js/inora.js?v=<?php echo iN_HelpSecure($version); ?>" defer></script>
+  <script src="<?php echo $baseThemePath; ?>/js/inora.js?v=<?php echo iN_HelpSecure($version); ?>&iv=3" defer></script>
 
   <!-- Dynamic values -->
   <script>
@@ -44,7 +44,7 @@ $baseThemePath = iN_HelpSecure($base_url) . 'themes/' . iN_HelpSecure($currentTh
   <script>
     window.siteurl = "<?php echo iN_HelpSecure($base_url); ?>";
   </script>
-  <script src="<?php echo $baseThemePath; ?>/js/inora_do.js?v=s211<?php echo iN_HelpSecure($version); ?>" defer></script>
+  <script src="<?php echo $baseThemePath; ?>/js/inora_do.js?v=s212<?php echo iN_HelpSecure($version); ?>&iv=3" defer></script>
 <?php endif; ?>
 
 <!-- Custom JS if exists -->

@@ -479,6 +479,7 @@
             const $gallery = $("#" + galleryID);
             if ($gallery.length > 0) {
               $gallery.lightGallery({
+                selector: '[data-src]',
                 videojs: true,
                 mode: 'lg-fade',
                 cssEasing: 'cubic-bezier(0.25, 0, 0.25, 1)',
@@ -498,6 +499,7 @@
           const $this = $(this);
           if (!$this.hasClass('lg-initialized')) {
             $this.lightGallery({
+              selector: '[data-src]',
               videojs: true,
               mode: 'lg-fade',
               cssEasing: 'cubic-bezier(0.25, 0, 0.25, 1)',
@@ -520,6 +522,114 @@
           }
         });
     }
+
+    // Inline video playback like Instagram: play within feed instead of opening lightbox
+    function handleInlineVideoClick(e) {
+        e.preventDefault();
+        if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); } else { e.stopPropagation(); }
+        var $wrap = $(this).closest('.i_post_image_swip_wrapper');
+        var htmlSelector = $wrap.attr('data-html');
+        try { console.debug('[inline-video] wrapper click', htmlSelector); } catch (e) {}
+        if (!htmlSelector) { return; }
+        var $videoSource = $(htmlSelector).find('video').first();
+        if (!$videoSource.length) { return; }
+        var src = $(htmlSelector).find('source[type="video/mp4"]').attr('src') || $videoSource.find('source').attr('src') || $videoSource.attr('src');
+        try { console.debug('[inline-video] src', src); } catch (e) {}
+        if (!src) { return; }
+
+        if (!$wrap.data('inlineVideoInitialized')) {
+          var $video = $('<video/>');
+          $video.addClass('i_p_video');
+          $video.attr('playsinline', '');
+          $video.attr('controls', '');
+          $video.attr('preload', 'metadata');
+          $video.attr('muted', 'muted');
+          $video.attr('autoplay', 'autoplay');
+          $video.attr('webkit-playsinline', '');
+          $video.attr('src', src);
+          $video.css({ position: 'absolute', width: '100%', height: '100%', display: 'block', objectFit: 'cover', top: 0, left: 0 });
+
+          $wrap.empty().append($video);
+          $wrap.removeAttr('data-html').removeAttr('data-poster');
+          $wrap.data('inlineVideoInitialized', true);
+
+          var videoEl = $video.get(0);
+          if (videoEl && videoEl.play) {
+            try { videoEl.load(); videoEl.play(); } catch (err) {}
+          }
+        } else {
+          var videoEl2 = $wrap.find('video').get(0);
+          if (videoEl2) {
+            if (videoEl2.paused) {
+              try { videoEl2.play(); } catch (err) {}
+            } else {
+              videoEl2.pause();
+            }
+          }
+        }
+    }
+
+    $(document)
+      .off('click.inlineVideo', '.i_post_image_swip_wrapper[data-html]')
+      .on('click.inlineVideo', '.i_post_image_swip_wrapper[data-html]', handleInlineVideoClick)
+      .off('touchstart.inlineVideo', '.i_post_image_swip_wrapper[data-html]')
+      .on('touchstart.inlineVideo', '.i_post_image_swip_wrapper[data-html]', handleInlineVideoClick)
+      .off('click.inlineVideoPlayBtn', '.i_post_image_swip_wrapper .playbutton')
+      .on('click.inlineVideoPlayBtn', '.i_post_image_swip_wrapper .playbutton', handleInlineVideoClick);
+
+    // Inline video playback for product/swiper slides
+    function handleInlineVideoClickSwiper(e) {
+        e.preventDefault();
+        if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); } else { e.stopPropagation(); }
+        var $anchor = $(this);
+        var htmlSelector = $anchor.attr('data-html');
+        try { console.debug('[inline-video-swiper] anchor click', htmlSelector); } catch (e) {}
+        var $videoSource = $(htmlSelector).find('video').first();
+        if (!$videoSource.length) { return; }
+        var src = $(htmlSelector).find('source[type="video/mp4"]').attr('src') || $videoSource.find('source').attr('src') || $videoSource.attr('src');
+        try { console.debug('[inline-video-swiper] src', src); } catch (e) {}
+        if (!src) { return; }
+
+        var $container = $anchor.closest('.swiper-slide');
+        var $target = $container.find('.swiper-img');
+        if (!$target.length) { $target = $container; }
+
+        if (!$container.data('inlineVideoInitialized')) {
+          var $video = $('<video/>');
+          $video.addClass('i_p_video');
+          $video.attr('playsinline', '');
+          $video.attr('controls', '');
+          $video.attr('preload', 'metadata');
+          $video.attr('muted', 'muted');
+          $video.attr('autoplay', 'autoplay');
+          $video.attr('webkit-playsinline', '');
+          $video.attr('src', src);
+          $video.css({ width: '100%', height: '100%', display: 'block', objectFit: 'cover' });
+
+          $target.empty().append($video);
+          $container.data('inlineVideoInitialized', true);
+
+          var videoEl = $video.get(0);
+          if (videoEl && videoEl.play) {
+            try { videoEl.load(); videoEl.play(); } catch (err) {}
+          }
+        } else {
+          var videoEl2 = $container.find('video').get(0);
+          if (videoEl2) {
+            if (videoEl2.paused) {
+              try { videoEl2.play(); } catch (err) {}
+            } else {
+              videoEl2.pause();
+            }
+          }
+        }
+    }
+
+    $(document)
+      .off('click.inlineVideoSwiper', '.swiper-slide a[data-html]')
+      .on('click.inlineVideoSwiper', '.swiper-slide a[data-html]', handleInlineVideoClickSwiper)
+      .off('touchstart.inlineVideoSwiper', '.swiper-slide a[data-html]')
+      .on('touchstart.inlineVideoSwiper', '.swiper-slide a[data-html]', handleInlineVideoClickSwiper);
 
     window.initImageBackgrounds = function (targetSelector = '.i_post_image_swip_wrapper', scope = $(document)) {
       scope.find(targetSelector).each(function () {
@@ -552,7 +662,7 @@ window.initStandaloneSwiperLightGallery = function (scope = $(document)) {
     }
 
     $wrapper.lightGallery({
-      selector: '.swiper-slide a',
+      selector: '.swiper-slide a:not([data-html])',
       videojs: true,
       mode: 'lg-fade',
       cssEasing: 'cubic-bezier(0.25, 0, 0.25, 1)',
